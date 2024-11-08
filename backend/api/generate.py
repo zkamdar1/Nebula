@@ -1,0 +1,1 @@
+# Endpoint to initiate video generation

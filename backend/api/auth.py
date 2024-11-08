@@ -1,0 +1,1 @@
+# Endpoints for authentication (register, login)

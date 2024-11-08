@@ -1,0 +1,1 @@
+# Endpoints for managing projects (create, update, get)

@@ -1,0 +1,1 @@
+# Helper functions for Firebase authentication (new)
