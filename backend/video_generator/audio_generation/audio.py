@@ -35,7 +35,7 @@ def generate_audio(script_text, output_folder="temp_clips"):
     response = openai.audio.speech.create(
         model="tts-1",
         input=script_text,
-        voice="onyx",
+        voice="echo",
     )
 
     # Write the audio file to the specified folder
