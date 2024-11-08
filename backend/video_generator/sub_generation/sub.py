@@ -133,7 +133,7 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
     max_text_width = int(video_width * 0.88)
 
     # Define fade duration (adjust as needed)
-    fade_duration = 0.18  # Duration of the fade-in and fade-out effects in seconds
+    fade_duration = 0.07  # Duration of the fade-in and fade-out effects in seconds
 
     for i, (start_time, end_time, text) in enumerate(subtitles):
         duration = end_time - start_time
@@ -142,6 +142,7 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
         text_y_position = int(video_height * 0.44)  # 40% from the top
 
         # Create shadow TextClip
+        '''
         shadow_text_clip = TextClip(
             text.upper(),
             fontsize=55,
@@ -156,7 +157,7 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
         ).set_position(('center', text_y_position)).set_start(start_time).set_duration(duration)
 
         shadow_text_clip = shadow_text_clip.fadein(fade_duration).fadeout(fade_duration-0.1)
-
+        '''
         # Create a TextClip for each subtitle phrase with requested styles
         text_clip = TextClip(
             text.upper(),  # Convert text to uppercase
@@ -164,7 +165,7 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
             color='white',
             font='Palatino-Bold',  # Updated font
             stroke_color='white',  # Outline for readability
-            stroke_width=2,        # Increased stroke width for more pronounced outline
+            stroke_width=1,        # Increased stroke width for more pronounced outline
             method='caption',      # Enable text wrapping
             size=(max_text_width, None),  # Set the width, height will be auto-calculated
             align='center',        # Center-align the text
@@ -175,7 +176,7 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
         text_clip = text_clip.fadeout(fade_duration)
 
          # Append both shadow and main text clips
-        text_clips.extend([shadow_text_clip, text_clip])
+        text_clips.extend([text_clip])
 
     # Overlay subtitles on the video
     video_with_subtitles = CompositeVideoClip([video] + text_clips)

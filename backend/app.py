@@ -5,7 +5,7 @@ from backend.video_generator.sub_generation.sub import add_subtitles_to_video, g
 from backend.video_generator.music_generation.music import add_background_music
 import time
 
-def create_video_with_audio_and_subtitles(background_clips_folder):
+def create_video_with_audio_and_subtitles():
     # Generate the script using GPT
     script_text = generate_script()
     
@@ -33,7 +33,5 @@ def create_video_with_audio_and_subtitles(background_clips_folder):
 
 # Example usage
 if __name__ == "__main__":
-    background_clips_folder = "background_clips"  # Replace with your actual folder containing clips
-
     # Specify the output folder where the video should be saved
-    create_video_with_audio_and_subtitles(background_clips_folder)
+    create_video_with_audio_and_subtitles()
