@@ -2,10 +2,24 @@
 import os
 import re
 import time
+from dotenv import load_dotenv
 import chardet
 import shutil
 from google.cloud import speech_v1p1beta1 as speech
 from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
+from google.cloud import speech_v1p1beta1 as speech
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Set Google Application Credentials (needed by google-cloud-speech)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+
+if os.getenv("GOOGLE_APPLICATION_CREDENTIALS"):
+    print(f"Google credentials path loaded: {os.getenv('GOOGLE_APPLICATION_CREDENTIALS')}")
+else:
+    raise ValueError("Google credentials path not found. Ensure it is set in the .env file.")
+
 
 timestamp = int(time.time())
 

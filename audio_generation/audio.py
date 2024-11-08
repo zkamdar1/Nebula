@@ -1,12 +1,21 @@
-from openai import OpenAI
+import openai
 import time
 import os
+from dotenv import load_dotenv
 from moviepy.editor import AudioFileClip, concatenate_audioclips
 
-client = OpenAI()
 
-# Set your OpenAI API key
-client.api_key = os.getenv("OPENAI_API_KEY")
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the keys
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+if openai_api_key is None or openai_api_key.strip() == "":
+    raise ValueError("OpenAI API key not found. Please ensure it is set in the .env file.")
+
+# Set the OpenAI API key
+openai.api_key = openai_api_key
 
 def generate_audio(script_text, output_folder="audio_outputs"):
     # Ensure the output folder exists
@@ -19,7 +28,7 @@ def generate_audio(script_text, output_folder="audio_outputs"):
     output_audio_file = os.path.join(output_folder, f"output_audio_{timestamp}.mp3")
 
     # Call the API to create the audio content
-    response = client.audio.speech.create(
+    response = openai.audio.speech.create(
         model="tts-1",
         input=script_text,
         voice="onyx",

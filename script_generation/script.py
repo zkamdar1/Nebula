@@ -1,9 +1,19 @@
 import random
-from openai import OpenAI
+import openai
 import os
-client = OpenAI()
-# Set your OpenAI API key
-client.api_key = os.getenv("OPENAI_API_KEY")
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the keys
+openai_api_key = os.getenv("OPENAI_API_KEY")
+
+if openai_api_key is None or openai_api_key.strip() == "":
+    raise ValueError("OpenAI API key not found. Please ensure it is set in the .env file.")
+
+# Set the OpenAI API key
+openai.api_key = openai_api_key
 
 
 def generate_script():
@@ -55,7 +65,7 @@ def generate_script():
     
 
     try:
-        completion = client.chat.completions.create(
+        completion = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", 
