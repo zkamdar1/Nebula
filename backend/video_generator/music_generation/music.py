@@ -38,7 +38,7 @@ def add_background_music(
 
     # Define the path to the clips folder located in assets/background_clips
     music_folder = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, "assets", "music_clips")
+    os.path.join(os.path.dirname(__file__), os.pardir, "assets", "music_clips")
     )
 
     # Full path for the output video file

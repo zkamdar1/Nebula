@@ -5,7 +5,7 @@ from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 def add_audio_to_video(audio_file, output_video, output_folder="temp_clips"):
     # Define the path to the clips folder located in assets/background_clips
     background_clips_folder = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, "assets", "background_clips")
+        os.path.join(os.path.dirname(__file__), os.pardir, "assets", "background_clips")
     )
 
     # Ensure the background clips folder exists

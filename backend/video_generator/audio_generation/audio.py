@@ -43,7 +43,7 @@ def generate_audio(script_text, output_folder="temp_clips"):
         audio_file.write(response.content)
 
     # Define the path to the silence.mp3 in the assets/background_clips folder
-    background_clips_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, "assets", "background_clips", "silence.mp3"))
+    background_clips_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "assets", "background_clips", "silence.mp3"))
 
     # Add silence to the end of the audio
     original_audio = AudioFileClip(output_audio_file)
