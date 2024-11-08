@@ -25,44 +25,60 @@ Welcome to **Nebula**, an automatic video generator project. Nebula takes a topi
 ## Folder and File Structure
 Here is a detailed explanation of the Nebula project folder and file structure:
 
+### **Final Project Structure**
+
 ```
-VIDEO_MAKER/
-├── .venv/                         # Virtual environment folder for dependencies
-├── audio_generation/              # Audio generation module
-│   ├── audio.py                  # Generates audio from script text
-│   └── __init__.py               # Initializes audio generation module
-├── audio_outputs/                 # Contains generated audio files
-├── audio_vids/                    # Contains videos with audio added
-├── background_clips/              # Folder containing background video clips
-│   ├── clips.py                  # Utility script for handling background clips
-│   └── __init__.py               # Initializes background clips module
-├── final_videos/                  # Folder for final output videos with subtitles
-├── music_clips/                   # Folder containing music clips for background
-├── music_generation/              # Music generation module
-│   ├── music.py                  # Generates and selects background music for videos
-│   └── __init__.py               # Initializes music generation module
-├── script_generation/             # Script generation module
-│   ├── script.py                 # Generates the script using OpenAI's GPT model
-│   └── __init__.py               # Initializes script generation module
-├── sub_generation/                # Subtitle generation module
-│   ├── sub.py                    # Generates and adds subtitles to the video
-│   └── __init__.py               # Initializes subtitle generation module
-├── sub_vids/                      # Contains videos with subtitles added
-├── Test/                          # Testing module for individual components
-│   ├── test.py                   # Test scripts
-│   └── __init__.py               # Initializes testing module
-├── transcripts/                   # Folder containing generated transcript files
-│   ├── transcript.py             # Handles transcript generation
-│   └── __init__.py               # Initializes transcripts module
-├── utils/                         # Utility functions and helpers
-│   ├── utils.py                  # Contains utility functions like ensuring folder exists
-│   └── __init__.py               # Initializes utils module
-├── video_editing/                 # Video editing module
-│   ├── video.py                  # Adds audio to video and handles video concatenation
-│   └── __init__.py               # Initializes video editing module
-├── __init__.py                    # Initializes the main package
-├── app.py                         # Main entry point for generating videos
-└── README.md                      # Project documentation
+/video-maker-app
+│
+├── /backend                  # Backend Directory (API, Logic, Database)
+│   ├── Dockerfile            # Dockerfile for containerizing backend (Python + FastAPI)
+│   ├── docker-compose.yml    # Docker Compose configuration for backend services
+│   ├── requirements.txt      # Python dependencies
+│   ├── app.py                # Main FastAPI application entry point
+│   ├── /api                  # API Endpoints
+│   │   ├── __init__.py
+│   │   ├── auth.py           # Endpoints for authentication (register, login)
+│   │   ├── projects.py       # Endpoints for managing projects (create, update, get)
+│   │   └── generate.py       # Endpoint to initiate video generation
+│   ├── /video_generator      # Video generation functionality
+│   │   ├── __init__.py
+│   │   ├── generate_video.py # Main video generation logic
+│   │   ├── effects.py        # Additional effects functions (tone, style)
+│   │   └── assets.py         # Manage music and background assets
+│   ├── /utils                # Utility scripts and helper functions
+│   │   ├── __init__.py
+│   │   ├── database.py       # SQLAlchemy setup and database models
+│   │   ├── s3_client.py      # Functions to upload/download from AWS S3
+│   │   └── auth_utils.py     # Helper functions for JWT and authentication
+│   └── /data                 # Data folder for storing configurations and temporary files
+│       ├── config.json       # Application configuration
+│       └── temp_videos       # Temporary storage for videos before uploading
+│
+├── /frontend                 # Frontend Directory (React-based)
+│   ├── /public               # Public assets for React app
+│   ├── /src                  # Source code for React app
+│   │   ├── /components       # Reusable components
+│   │   │   ├── ProjectCard.js # Project cards for dashboard
+│   │   │   ├── Navbar.js      # Navbar component
+│   │   │   └── LoginForm.js   # Login form for authentication
+│   │   ├── /pages            # Main pages of the application
+│   │   │   ├── Dashboard.js   # User dashboard displaying project cards
+│   │   │   ├── ProjectPage.js # Page to view and edit individual projects
+│   │   │   └── LoginPage.js   # User login page
+│   │   ├── /services         # Axios API services
+│   │   │   ├── api.js         # API service functions for communicating with the backend
+│   │   ├── App.js            # Main React component
+│   │   ├── index.js          # ReactDOM entry point
+│   │   └── App.css           # Styling for the React components
+│   └── package.json          # React dependencies
+│
+├── /deployment               # Deployment and Infrastructure Configuration
+│   ├── nginx.conf            # Nginx configuration for load balancing
+│   ├── Dockerfile.frontend   # Dockerfile for containerizing frontend
+│   ├── kubernetes.yaml       # Kubernetes configuration for scalability (optional)
+│   └── cloudformation.yaml   # AWS CloudFormation for managing cloud resources (optional)
+│
+└── README.md                 # Project documentation
 ```
 
 ## Step-by-Step Process
@@ -138,7 +154,7 @@ This section explains the process of generating a video using Nebula, along with
    ```
 2. Run the main application:
    ```sh
-   python app.py
+   python -m backend.app
    ```
 3. Follow the prompts to generate a video. The final video will be saved in the `final_videos/` folder.
 
