@@ -225,3 +225,6 @@ if __name__ == "__main__":
         print(f"SRT file created at: {srt_file_path}")
     else:
         print("Failed to generate SRT.")
+        
+    # Clean up temporary files
+    clear_folder('temp_clips')
