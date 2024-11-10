@@ -1,5 +1,6 @@
 # SQLAlchemy setup and database models
 import json
+from fastapi import logger
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
@@ -27,51 +28,29 @@ def init_db():
 
 '''
 
-def get_secret():
-
-    #secret_name = os.getenv("SECRET_NAME")
-    region_name = "us-east-1"
-
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId="rds!db-64a38d98-68a9-4c36-a088-3ae9bfa5ba2d"
-        )
-    except ClientError as e:
-        print("Secret get failed")
-
-    secret = json.loads(get_secret_value_response['SecretString'])
-    passw = secret['password']
-
-    return passw
-
-    # Your code goes here.
-
-
 
 def test_db_connection():
     ENDPOINT = os.getenv("AWS_ENDPOINT")
-    PORT = int(os.getenv("AWS_PORT", 5432))
+    PORT = (os.getenv("AWS_PORT", 5432))
     USER = os.getenv("AWS_USER")
+    PASS = os.getenv("AWS_PASS")
     DBNAME = os.getenv("AWS_DBNAME")
+    REGION = os.getenv("AWS_REGION")
+    
+    if not all([ENDPOINT, PASS, PORT, USER, DBNAME, REGION]):
+        print("One or more environment variables are missing. Please check your configuration.")
+        return
     
     # Connect to the database
     try:
-        secret = get_secret()
         conn = psycopg2.connect(
             host=ENDPOINT,
             port=PORT,
             database=DBNAME,
             user=USER,
-            password=secret,
-            sslmode='require'
+            password=PASS,
         )
+        
         cur = conn.cursor()
         cur.execute("SELECT NOW();")
         result = cur.fetchone()
@@ -79,7 +58,6 @@ def test_db_connection():
         cur.close()
         conn.close()
     except Exception as e:
-        print(f"Failed to generate auth token: {e}")
         print(f"Database connection failed: {e}")
 
 if __name__ == "__main__":
