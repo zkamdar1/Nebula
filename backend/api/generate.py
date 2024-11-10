@@ -2,7 +2,10 @@
 from fastapi import APIRouter, HTTPException
 from video_generator.full_generation.fullvid import create_video_with_audio_and_subtitles
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/generate",
+    tags=["generate"],
+)
 
 @router.post("/generate")
 async def generate_video_endpoint():

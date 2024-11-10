@@ -1,19 +1,21 @@
 # SQLAlchemy setup and database models
-import json
-from fastapi import logger
-from sqlalchemy import create_engine, Column, Integer, String, ForeignKey
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, relationship
+from typing import Generator
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import declarative_base, sessionmaker, Session
 import os
-import boto3
-from botocore.exceptions import ClientError
-import psycopg2
-'''
+
 # Get the DATABASE_URL from environment variables
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-# Create an engine to connect to the PostgreSQL database
-engine = create_engine(DATABASE_URL)
+if not DATABASE_URL:
+    print("DATABASE_URL is not set in the environment variables.")
+
+# Create the SQLAlchemy engine with connection pooling and echo for debugging
+engine = create_engine(
+    DATABASE_URL,
+    pool_pre_ping=True,  # Ensures connections are valid
+    echo=True  # Set to False in production
+)
 
 # Configure a session to interact with the database
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
@@ -21,44 +23,40 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 # Base class for defining models
 Base = declarative_base()
 
+def get_db() -> Generator[Session, None, None]:
+    """
+    Dependency that provides a SQLAlchemy session.
+    Ensures that the session is closed after the request.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 def init_db():
-    # Import models here to ensure they are registered with SQLAlchemy's metadata
-    from utils.models import Test  # Update this import to match your actual model file and classes
-    Base.metadata.create_all(bind=engine)
-
-'''
-
+    """
+    Initialize the database by creating all tables.
+    Ensure all models are imported before calling this function.
+    """
+    from backend.models.test import Test  # Import all your models here
+    Test.metadata.create_all(bind=engine)
 
 def test_db_connection():
-    ENDPOINT = os.getenv("AWS_ENDPOINT")
-    PORT = (os.getenv("AWS_PORT", 5432))
-    USER = os.getenv("AWS_USER")
-    PASS = os.getenv("AWS_PASS")
-    DBNAME = os.getenv("AWS_DBNAME")
-    REGION = os.getenv("AWS_REGION")
-    
-    if not all([ENDPOINT, PASS, PORT, USER, DBNAME, REGION]):
-        print("One or more environment variables are missing. Please check your configuration.")
-        return
-    
-    # Connect to the database
+    """
+    Test the database connection using SQLAlchemy.
+    """
     try:
-        conn = psycopg2.connect(
-            host=ENDPOINT,
-            port=PORT,
-            database=DBNAME,
-            user=USER,
-            password=PASS,
-        )
-        
-        cur = conn.cursor()
-        cur.execute("SELECT NOW();")
-        result = cur.fetchone()
+        # Create a new database session
+        db = SessionLocal()
+        # Execute a simple query to check the connection
+        result = db.execute(text('SELECT NOW();')).fetchone()
         print(f"Connection successful! Current time from DB: {result[0]}")
-        cur.close()
-        conn.close()
+        #init_db()
+        db.close()
     except Exception as e:
         print(f"Database connection failed: {e}")
+        raise e
 
 if __name__ == "__main__":
     test_db_connection()

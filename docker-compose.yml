@@ -16,4 +16,4 @@ services:
       - AWS_PORT=${AWS_PORT}
       - AWS_DBNAME=${AWS_DBNAME}
       - AWS_ENDPOINT=${AWS_ENDPOINT}
-      - AWS_REGION=${AWS_REGION}
+      - DATABASE_URL=${DATABASE_URL}
