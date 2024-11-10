@@ -1,39 +1,74 @@
 # Nebula - Automatic Video Generator Project
 
-Welcome to **Nebula**, an automatic video generator project. Nebula takes a topic and turns it into a complete video with background visuals, corresponding audio narration, and subtitles. Below, you'll find a detailed overview of the project structure, how it works step-by-step, and how to use it.
+Welcome to **Nebula**, an automatic video generator project. Nebula takes a topic and turns it into a complete video with background visuals, corresponding audio narration, and subtitles. This README provides a comprehensive overview of the project, the tools and technologies used, setup instructions, and how the backend operates.
+
+## Table of Contents
+
+- [Project Overview](#project-overview)
+- [Tools and Technologies](#tools-and-technologies)
+- [Folder and File Structure](#folder-and-file-structure)
+- [Backend Architecture](#backend-architecture)
+  - [FastAPI](#fastapi)
+  - [SQLAlchemy](#sqlalchemy)
+  - [PostgreSQL & AWS RDS](#postgresql--aws-rds)
+- [Installation](#installation)
+  - [Prerequisites](#prerequisites)
+  - [Setup Steps](#setup-steps)
+- [Running the Application](#running-the-application)
+  - [Using Docker](#using-docker)
+  - [Accessing FastAPI Documentation](#accessing-fastapi-documentation)
+- [API Endpoints](#api-endpoints)
+- [Step-by-Step Process](#step-by-step-process)
+- [Future Improvements](#future-improvements)
+- [Contact](#contact)
+
+---
 
 ## Project Overview
-**Nebula** is a Python-based project that generates videos automatically. It comprises several steps:
 
-1. **Script Generation**: Generates a script based on a topic using OpenAI's GPT model.
-   - Files: `script_generation/script.py`
+**Nebula** is a Python-based project that automates the creation of videos from a given topic. Leveraging various tools and services, Nebula seamlessly integrates script generation, audio narration, video editing, subtitle creation, and music integration to produce high-quality videos.
 
-2. **Audio Generation**: Converts the generated script into an audio narration using Google Text-to-Speech.
-   - Files: `audio_generation/audio.py`
+### Key Features
 
-3. **Video Editing**: Combines pre-existing background video clips with the generated audio to produce a cohesive video.
-   - Files: `video_editing/video.py`, `background_clips/`
+1. **Script Generation**: Uses OpenAI's GPT model to generate a script based on a user-provided topic.
+2. **Audio Narration**: Converts the generated script into audio using Google Text-to-Speech.
+3. **Video Editing**: Combines background video clips with the generated audio to create a cohesive video.
+4. **Subtitle Generation**: Utilizes Google's Speech-to-Text API to generate subtitles and integrates them into the video.
+5. **Music Integration**: Adds background music to enhance the video's quality.
+6. **Final Output**: Produces a complete video with visuals, narration, music, and subtitles.
 
-4. **Subtitle Generation**: Generates subtitles from the audio using Google's Speech API and adds them to the video.
-   - Files: `sub_generation/sub.py`, `transcripts/`
+### Build and run the Docker containers and FASTAPI
+docker-compose up --build
 
-5. **Music Integration**: Adds background music to the video.
-   - Files: `music_generation/music.py`, `music_clips/`
+http://0.0.0.0:8000/docs#/
+---
 
-6. **Final Output**: The finished video with audio, music, and subtitles is saved in the `final_videos/` folder.
+## Tools and Technologies
+
+Nebula employs a combination of powerful tools and technologies to achieve its functionality:
+
+- **FastAPI**: A modern, fast (high-performance) web framework for building APIs with Python.
+- **SQLAlchemy**: A powerful SQL toolkit and Object-Relational Mapping (ORM) library for Python.
+- **PostgreSQL**: An advanced open-source relational database system.
+- **AWS RDS (Relational Database Service)**: A managed service that makes it easy to set up, operate, and scale a relational database in the cloud.
+- **Docker**: A platform for developing, shipping, and running applications in containers.
+- **pgAdmin**: A popular open-source administration and development platform for PostgreSQL.
+- **Python-dotenv**: A tool for managing environment variables.
+- **Uvicorn**: A lightning-fast ASGI server implementation, using uvloop and httptools.
+
+---
 
 ## Folder and File Structure
-Here is a detailed explanation of the Nebula project folder and file structure:
 
-### **Final Project Structure**
+Here's a detailed explanation of the Nebula project folder and file structure:
+
+
 
 ```
-/video-maker-app
+/nebula
 │
 ├── /backend                  # Backend Directory (API, Logic, Database)
 │   ├── Dockerfile            # Dockerfile for containerizing backend (Python + FastAPI)
-│   ├── docker-compose.yml    # Docker Compose configuration for backend services
-│   ├── requirements.txt      # Python dependencies
 │   ├── app.py                # Main FastAPI application entry point
 │   ├── /api                  # API Endpoints
 │   │   ├── __init__.py
@@ -42,17 +77,20 @@ Here is a detailed explanation of the Nebula project folder and file structure:
 │   │   └── generate.py       # Endpoint to initiate video generation
 │   ├── /video_generator      # Video generation functionality
 │   │   ├── __init__.py
-│   │   ├── generate_video.py # Main video generation logic
-│   │   ├── effects.py        # Additional effects functions (tone, style)
-│   │   └── assets.py         # Manage music and background assets
+│   │   ├── /full_generation # Main video generation logic
+│   │   ├── /audio_gen
+│   │   ├── /script_gen
+│   │   ├── /music_generation      # Additional effects functions (tone, style)
+│   │   └──/ temp_videos       # Temporary storage for videos before uploading
+│   │   └── /assets         # Manage music and background assets
+│   ├── /models                # Database models
+│   ├── /schemas                # Pydantic models for request/response validation
 │   ├── /utils                # Utility scripts and helper functions
 │   │   ├── __init__.py
-│   │   ├── database.py       # SQLAlchemy setup and database models
+│   │   ├── database.py       # SQLAlchemy setup and AWS RDS setup
 │   │   ├── s3_client.py      # Functions to upload/download from AWS S3
-│   │   └── auth_utils.py     # Helper functions for JWT and authentication
-│   └── /data                 # Data folder for storing configurations and temporary files
-│       ├── config.json       # Application configuration
-│       └── temp_videos       # Temporary storage for videos before uploading
+│   │   ├── firebase_utils.py # Helper functions for Firebase authentication (new)
+│   │   └── utils.py     # Helper functions for JWT and additional authentication  
 │
 ├── /frontend                 # Frontend Directory (React-based)
 │   ├── /public               # Public assets for React app
@@ -60,13 +98,16 @@ Here is a detailed explanation of the Nebula project folder and file structure:
 │   │   ├── /components       # Reusable components
 │   │   │   ├── ProjectCard.js # Project cards for dashboard
 │   │   │   ├── Navbar.js      # Navbar component
-│   │   │   └── LoginForm.js   # Login form for authentication
+│   │   │   ├── LoginForm.js   # Login form for authentication (Firebase integration)
 │   │   ├── /pages            # Main pages of the application
 │   │   │   ├── Dashboard.js   # User dashboard displaying project cards
 │   │   │   ├── ProjectPage.js # Page to view and edit individual projects
 │   │   │   └── LoginPage.js   # User login page
 │   │   ├── /services         # Axios API services
 │   │   │   ├── api.js         # API service functions for communicating with the backend
+│   │   ├── /firebase         # Firebase setup and utilities (new)
+│   │   │   ├── firebase.js    # Firebase initialization and config (automatically generated)
+│   │   │   ├── auth.js        # Functions for Firebase authentication (login, register)
 │   │   ├── App.js            # Main React component
 │   │   ├── index.js          # ReactDOM entry point
 │   │   └── App.css           # Styling for the React components
@@ -77,7 +118,10 @@ Here is a detailed explanation of the Nebula project folder and file structure:
 │   ├── Dockerfile.frontend   # Dockerfile for containerizing frontend
 │   ├── kubernetes.yaml       # Kubernetes configuration for scalability (optional)
 │   └── cloudformation.yaml   # AWS CloudFormation for managing cloud resources (optional)
-│
+│   ── docker-compose.yml    # Docker Compose configuration for backend services
+│   ── requirements.txt      # Python dependencies
+│   ── .env
+│   ── .gitignore
 └── README.md                 # Project documentation
 ```
 
