@@ -1,28 +1,18 @@
-// frontend/src/App.js
-
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import Dashboard from "./pages/Dashboard"; // To be created later
-import ProtectedRoute from "./components/ProtectedRoute"; // To be created
+// src/App.js
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+import Modal from './components/Modal';
 
 function App() {
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        {/* Protect the Dashboard route */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        {/* Redirect to login by default */}
-        <Route path="*" element={<LoginPage />} />
+        <Route path="/" element={<LandingPage setShowModal={setShowModal} />} />
       </Routes>
+      {showModal && <Modal onClose={() => setShowModal(false)} />}
     </Router>
   );
 }
