@@ -1,25 +1,40 @@
 // src/pages/DashboardPage.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth } from '../services/firebase';
 import { signOut } from 'firebase/auth';
 import { FaUserCircle, FaPlus } from 'react-icons/fa'; // Account icon and plus icon
 import './DashboardPage.css';
 import ProjectCard from '../components/ProjectCard';
+import api from '../services/api';
 
 function DashboardPage() {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const projects = []; // Replace with your array of project objects
+  const [projects, setProjects] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const handleLogout = async () => {
     await signOut(auth);
   };
 
-  // Sample data to display a placeholder project card
-  const sampleProject = {
-      title: "Sample Project",
-      description: "A brief description of the project.",
-      lastAccessed: "2024-11-12",
-      imageUrl: "", // Placeholder URL or path to a default image
+  const fetchProjects = async () => {
+    try {
+      const response = await api.get('/projects');
+      setProjects(response.data);
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    }
+  };
+
+  const createProject = async () => {
+    const title = prompt("Enter project title:");
+    const description = prompt("Enter project description:");
+    if (title && description) {
+      try {
+        const response = await api.post('/projects', { title, description });
+        setProjects([...projects, response.data]);
+      } catch (error) {
+        console.error("Error creating project:", error);
+      }
+    }
   };
 
   return (
@@ -45,25 +60,14 @@ function DashboardPage() {
         {projects.length === 0 ? (
           <p className="no-projects">No projects yet</p>
         ) : (
-          projects.map((project, index) => (
-            <div key={index} className="project-card">
-              <p>{project.name}</p>
-              {/* Add more project details here as needed */}
-            </div>
+          projects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              title={project.title}
+              description={project.description}
+              lastAccessed={project.last_accessed} />
           ))
         )}
-        <ProjectCard
-                    title={sampleProject.title}
-                    description={sampleProject.description}
-                    lastAccessed={sampleProject.lastAccessed}
-                    imageUrl={sampleProject.imageUrl}
-        />
-        <ProjectCard
-                    title={sampleProject.title}
-                    description={sampleProject.description}
-                    lastAccessed={sampleProject.lastAccessed}
-                    imageUrl={sampleProject.imageUrl}
-        />
       </div>
     </div>
   );

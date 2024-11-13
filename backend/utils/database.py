@@ -4,23 +4,19 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 import os
 
-# Get the DATABASE_URL from environment variables
+# Get the DATABASE_URL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
     print("DATABASE_URL is not set in the environment variables.")
 
-# Create the SQLAlchemy engine with connection pooling and echo for debugging
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,  # Ensures connections are valid
-    echo=True  # Set to False in production
-)
+# Create SQLAlchemy engine
+engine = create_engine(DATABASE_URL, pool_pre_ping=True)
 
-# Configure a session to interact with the database
+# Configure session to interact with database
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
-# Base class for defining models
+# Base class for models
 Base = declarative_base()
 
 def get_db() -> Generator[Session, None, None]:
@@ -39,24 +35,7 @@ def init_db():
     Initialize the database by creating all tables.
     Ensure all models are imported before calling this function.
     """
-    from backend.models.test import Test  # Import all your models here
-    Test.metadata.create_all(bind=engine)
+    from models.user import User  
+    from models.project import Project
 
-def test_db_connection():
-    """
-    Test the database connection using SQLAlchemy.
-    """
-    try:
-        # Create a new database session
-        db = SessionLocal()
-        # Execute a simple query to check the connection
-        result = db.execute(text('SELECT NOW();')).fetchone()
-        print(f"Connection successful! Current time from DB: {result[0]}")
-        #init_db()
-        db.close()
-    except Exception as e:
-        print(f"Database connection failed: {e}")
-        raise e
-
-if __name__ == "__main__":
-    test_db_connection()
+    Base.metadata.create_all(bind=engine)

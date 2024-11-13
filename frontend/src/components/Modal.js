@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "fire
 import { auth } from "../services/firebase";
 import './Modal.css';
 
-function Modal({ onClose }) {
+function Modal({ onClose, setUser }) {
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +18,7 @@ function Modal({ onClose }) {
       } else {
         await signInWithEmailAndPassword(auth, email, password);
       }
+      setUser(auth.currentUser);
       onClose(); // Close the modal on success
     } catch (error) {
       setError(error.message);

@@ -1,4 +1,27 @@
-.env
-venv/
+# Ignore Python cache files
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+.venv/
+venv/
+env/
+
+# Ignore local environment files
+.env
+credentials.json
+
+# Ignore IDE configurations
+.idea/
+.vscode/
+
+# Ignore git repository
+.git/
+.gitignore
+
+# Ignore other potentially large files not needed in the build
+*.log
+data/
+tmp/
