@@ -1,5 +1,5 @@
 // src/pages/DashboardPage.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { auth } from '../services/firebase';
 import { signOut } from 'firebase/auth';
 import { FaUserCircle, FaPlus } from 'react-icons/fa'; // Account icon and plus icon
@@ -9,7 +9,7 @@ import api from '../services/api';
 
 function DashboardPage() {
   const [projects, setProjects] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = async () => {
     await signOut(auth);

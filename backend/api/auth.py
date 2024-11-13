@@ -1,9 +1,9 @@
 # Endpoints for authentication (register, login)
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import HTTPBearer
-from utils.firebase_utils import verify_id_token, firebase_auth
+from utils.firebase_utils import verify_id_token
 from sqlalchemy.orm import Session
-from schemas.user import UserCreate, UserResponse
+from schemas.user import UserResponse
 from models.user import User
 from utils.database import get_db
 
@@ -14,31 +14,24 @@ router = APIRouter(
 )
 
 @router.post("/register", response_model=UserResponse)
-async def register(user: UserCreate, db: Session = Depends(get_db)):
-    # Check if user already exists
-    existing_user = db.query(User).filter(User.email == user.email).first()
+async def register(idToken: str, email: str, db: Session = Depends(get_db)):
+    # Verify the Firebase ID token to retrieve the UID
+    uid = verify_id_token(idToken)
+    if uid is None:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+    # Check if the user already exists in the database
+    existing_user = db.query(User).filter(User.uid == uid).first()
     if existing_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    
-    # Create user in Firebase Authentication
-    firebase_user = firebase_auth.create_user(email=user.email)
+        raise HTTPException(status_code=400, detail="User already registered")
 
     # Add new user to the database
-    db_user = User(uid=firebase_user.uid, email=user.email)
+    db_user = User(uid=uid, email=email)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
 
-@router.post("/login", response_model=UserResponse)
-async def login(user: UserCreate, db: Session = Depends(get_db)):
-    firebase_user = firebase_auth.get_user_by_email(user.email)
-
-    # Fetch user from the database
-    db_user = db.query(User).filter(User.uid == firebase_user.uid).first()
-    if not db_user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
 
 
 async def get_current_user(token: str = Depends(auth_scheme)):

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000', // Adjust if your backend is hosted elsewhere
+  baseURL: 'http://0.0.0.0:8000', // Adjust if your backend is hosted elsewhere
 });
 
 // Add an interceptor to include the Firebase token in each request

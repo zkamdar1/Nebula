@@ -1,6 +1,6 @@
 # Helper functions for Firebase authentication (new)
 import firebase_admin
-from firebase_admin import auth as firebase_auth, credentials
+from firebase_admin import auth, credentials
 import os
 
 
@@ -17,9 +17,12 @@ firebase_admin.initialize_app(cred)
 
 def verify_id_token(id_token):
     try:
-        decoded_token = firebase_auth.verify_id_token(id_token)
+        decoded_token = auth.verify_id_token(id_token)
         uid = decoded_token['uid']
         return uid
     except Exception as e:
         print("Error verifying ID token:", e)
         return None
+
+#print(cred)
+print(verify_id_token('Qs4lLMoalYMAAcMXAnLVmb61tsG3'))
