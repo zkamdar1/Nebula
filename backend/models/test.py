@@ -1,7 +1,7 @@
 # backend/models/test.py
 
 from sqlalchemy import Column, Integer, String
-from utils.database import Base
+from backend.utils.database import Base
 
 class Test(Base):
     __tablename__ = "test_table"

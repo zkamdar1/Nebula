@@ -1,8 +1,8 @@
-from video_generator.script_generation.script import generate_script
-from video_generator.audio_generation.audio import generate_audio
-from video_generator.video_editing.video import add_audio_to_video
-from video_generator.sub_generation.sub import add_subtitles_to_video, generate_word_level_srt, clear_folder
-from video_generator.music_generation.music import add_background_music
+from backend.video_generator.script_generation.script import generate_script
+from backend.video_generator.audio_generation.audio import generate_audio
+from backend.video_generator.video_editing.video import add_audio_to_video
+from backend.video_generator.sub_generation.sub import add_subtitles_to_video, generate_word_level_srt, clear_folder
+from backend.video_generator.music_generation.music import add_background_music
 import time
 
 def create_video_with_audio_and_subtitles():

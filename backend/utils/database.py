@@ -35,7 +35,7 @@ def init_db():
     Initialize the database by creating all tables.
     Ensure all models are imported before calling this function.
     """
-    from models.user import User  
-    from models.project import Project
+    from backend.models.user import User  
+    from backend.models.project import Project
 
     Base.metadata.create_all(bind=engine)

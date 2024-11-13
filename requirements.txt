@@ -19,6 +19,7 @@ email_validator==2.2.0
 exceptiongroup==1.2.2
 fastapi==0.115.4
 ffmpeg==1.4
+firebase==4.0.1
 firebase-admin==6.6.0
 google==3.0.0
 google-api-core==2.22.0

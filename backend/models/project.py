@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-from utils.database import Base
+from backend.utils.database import Base
 import datetime
 
 class Project(Base):

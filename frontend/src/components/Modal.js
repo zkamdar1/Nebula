@@ -20,7 +20,7 @@ function Modal({ onClose, setUser }) {
         
         // Get the ID token from Firebase and send it to the backend
       const idToken = await getIdToken(firebaseUser.user);
-      await api.post(isRegister ? '/auth/register' : '/auth/login', { idToken, email: firebaseUser.user.email });
+      await api.post(isRegister ? '/auth/register' : { idToken, email: firebaseUser.user.email });
         
       } else {
         firebaseUser = await signInWithEmailAndPassword(auth, email, password);

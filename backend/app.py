@@ -1,9 +1,9 @@
 from fastapi import FastAPI, Depends
-from api import generate  # Import the router for video generation (generate.py)
-from api import health
-from api import projects
-from api import auth
-from utils.database import init_db
+from backend.api import generate  # Import the router for video generation (generate.py)
+from backend.api import health
+from backend.api import projects
+from backend.api import auth
+from backend.utils.database import init_db
 from contextlib import asynccontextmanager
 
 # Use asynccontextmanager to manage startup and shutdown

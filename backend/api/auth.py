@@ -1,11 +1,11 @@
 # Endpoints for authentication (register, login)
 from fastapi import Depends, HTTPException, APIRouter
 from fastapi.security import HTTPBearer
-from utils.firebase_utils import verify_id_token
+from backend.utils.firebase_utils import verify_id_token
 from sqlalchemy.orm import Session
-from schemas.user import UserResponse
-from models.user import User
-from utils.database import get_db
+from backend.schemas.user import UserResponse
+from backend.models.user import User
+from backend.utils.database import get_db
 
 auth_scheme = HTTPBearer()
 router = APIRouter(

@@ -23,6 +23,3 @@ def verify_id_token(id_token):
     except Exception as e:
         print("Error verifying ID token:", e)
         return None
-
-#print(cred)
-print(verify_id_token('Qs4lLMoalYMAAcMXAnLVmb61tsG3'))

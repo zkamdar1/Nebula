@@ -1,5 +1,8 @@
-from urllib.parse import quote
+# test_imports.py
+import fastapi
+import firebase_admin
+import sqlalchemy
+import pydantic
+import uvicorn
 
-password = "N}$c$3ps4bq(+Q!>Il*()QqtS786"
-encoded_password = quote(password)
-print(encoded_password)
+print("All imports successful!")

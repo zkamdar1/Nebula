@@ -3,9 +3,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
-from utils.database import get_db
-from models.test import Test
-from schemas.test import TestCreate, TestRead
+from backend.utils.database import get_db
+from backend.models.test import Test
+from backend.schemas.test import TestCreate, TestRead
 
 router = APIRouter(
     prefix="/test",

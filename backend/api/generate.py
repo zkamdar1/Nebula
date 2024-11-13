@@ -1,6 +1,6 @@
 # Endpoint to initiate video generation
 from fastapi import APIRouter, HTTPException
-from video_generator.full_generation.fullvid import create_video_with_audio_and_subtitles
+from backend.video_generator.full_generation.fullvid import create_video_with_audio_and_subtitles
 
 router = APIRouter(
     prefix="/generate",
