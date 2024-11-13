@@ -25,10 +25,10 @@
 .title-link {
   font-size: 4rem;
   font-weight: bold;
-  color: #ff7a7a; /* Slightly different color to indicate it’s clickable */
+  color: #ff7a7a;
   text-align: center;
   margin: 0;
-  text-decoration: none; /* Removes underline by default */
+  text-decoration: none;
   transition: color 3s ease;
 }
 

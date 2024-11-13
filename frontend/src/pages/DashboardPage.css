@@ -1,0 +1,111 @@
+/* src/pages/DashboardPage.css */
+.dashboard-container {
+  background-color: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+  padding: 2rem;
+  position: relative;
+}
+
+/* Hiding the scrollbar */
+body, .dashboard-container {
+  overflow: hidden;
+}
+
+/* Account Icon and Dropdown */
+.account-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 2.5rem;
+  right: 0.5rem;
+  background-color: #333;
+  border-radius: 10px;
+  width: 100px;
+  text-align: center;
+}
+
+.dropdown-item {
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #444;
+}
+
+/* New Project Card */
+.new-project-card {
+  background-color: #222;
+  color: white;
+  border-radius: 12px;
+  width: 300px;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.new-project-card:hover {
+  background-color: #333;
+}
+
+.new-project-card p {
+  margin-top: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Existing Projects Section */
+.projects-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  height: 50%;
+  padding: 1rem;
+  border: 1px solid #fffdd0; /* White outline */
+  border-radius: 12px; /* Rounded corners */
+  box-sizing: border-box;
+}
+
+.project-card {
+  background-color: #222;
+  border-radius: 8px;
+  width: 140px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.project-card:hover {
+  background-color: #333;
+}
+
+.no-projects {
+  font-size: 1.1rem;
+  color: #888;
+}
