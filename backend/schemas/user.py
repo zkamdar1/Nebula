@@ -10,7 +10,6 @@ class UserCreate(UserBase):
 
 class UserResponse(UserBase):
     uid: str
-    created_at: Optional[datetime]
 
     class Config:
         orm_mode = True  # Allows using ORM objects with Pydantic models

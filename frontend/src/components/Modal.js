@@ -1,12 +1,12 @@
 // src/components/Modal.js
 import React, { useState } from 'react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, getIdToken } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../services/firebase";
 import './Modal.css';
 import api from '../services/api'; // Import API for backend communication
 
 function Modal({ onClose, setUser }) {
-  const [isRegister, setIsRegister] = useState(false);
+  const [isRegister, setIsRegister] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -16,18 +16,17 @@ function Modal({ onClose, setUser }) {
     try {
       let firebaseUser;
       if (isRegister) {
-        firebaseUser = await createUserWithEmailAndPassword(auth, email, password);
-        
-        // Get the ID token from Firebase and send it to the backend
-      const idToken = await getIdToken(firebaseUser.user);
-      await api.post(isRegister ? '/auth/register' : { idToken, email: firebaseUser.user.email });
-        
+        firebaseUser = await createUserWithEmailAndPassword(auth, email, password); 
       } else {
         firebaseUser = await signInWithEmailAndPassword(auth, email, password);
       }
 
+      // Send the ID token and email to the appropriate backend endpoint
+      const endpoint = isRegister ? '/auth/register' : '/auth/login';
+      await api.post(endpoint, {
+        email: firebaseUser.user.email,
+      });
       
-
       // Set the authenticated Firebase user to the main state
       setUser(firebaseUser.user);
       onClose(); // Close the modal on successful authentication

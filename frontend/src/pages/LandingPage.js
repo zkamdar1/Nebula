@@ -33,7 +33,7 @@ function LandingPage({ user, setUser }) {
         </button>
       )}
 
-      {showModal && <Modal onClose={() => setShowModal(false)} />}
+      {showModal && <Modal onClose={() => setShowModal(false)} setUser={setUser} />}
     </div>
   );
 }

@@ -5,6 +5,7 @@ from backend.api import projects
 from backend.api import auth
 from backend.utils.database import init_db
 from contextlib import asynccontextmanager
+from fastapi.middleware.cors import CORSMiddleware
 
 # Use asynccontextmanager to manage startup and shutdown
 @asynccontextmanager
@@ -16,6 +17,19 @@ async def lifespan(app: FastAPI):
 
 # Pass the lifespan context to FastAPI
 app = FastAPI(lifespan=lifespan)
+
+# Configure CORS
+origins = [
+    "http://localhost:3000",  # Replace with your frontend URL
+    # Add other origins if necessary
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allows specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Register the routers with specific prefixes for better organization
 app.include_router(generate.router)

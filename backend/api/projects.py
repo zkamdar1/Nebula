@@ -13,8 +13,12 @@ router = APIRouter(
     tags=["projects"],
     )
 
-@router.post("/projects", response_model=ProjectResponse)
-async def create_project(project: ProjectCreate, db: Session = Depends(get_db), user_id: str = Depends(get_current_user)):
+@router.post("/", response_model=ProjectResponse)
+def create_project(
+    project: ProjectCreate,
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user)
+):
     new_project = Project(
         id=str(uuid4()),
         title=project.title,
@@ -26,6 +30,10 @@ async def create_project(project: ProjectCreate, db: Session = Depends(get_db), 
     db.refresh(new_project)
     return new_project
 
-@router.get("/projects", response_model=List[ProjectResponse])
-async def get_projects(db: Session = Depends(get_db), user_id: str = Depends(get_current_user)):
-    return db.query(Project).filter(Project.user_id == user_id).all()
+@router.get("/", response_model=List[ProjectResponse])
+def get_projects(
+    db: Session = Depends(get_db),
+    user_id: str = Depends(get_current_user)
+):
+    projects = db.query(Project).filter(Project.user_id == user_id).all()
+    return projects
