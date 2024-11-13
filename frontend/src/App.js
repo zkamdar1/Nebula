@@ -1,18 +1,28 @@
 // src/App.js
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { auth } from './services/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
-import Modal from './components/Modal';
+import DashboardPage from './pages/DashboardPage';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  const [showModal, setShowModal] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+    return unsubscribe;
+  }, []);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LandingPage setShowModal={setShowModal} />} />
+        <Route path="/" element={<LandingPage user={user} setUser={setUser} />} />
+        <Route path="/dashboard" element={<ProtectedRoute user={user}><DashboardPage /></ProtectedRoute>} />
       </Routes>
-      {showModal && <Modal onClose={() => setShowModal(false)} />}
     </Router>
   );
 }

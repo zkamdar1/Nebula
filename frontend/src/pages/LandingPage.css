@@ -16,7 +16,20 @@
 .title {
   font-size: 4rem;
   font-weight: bold;
+  color: white;
+  text-align: center;
   margin: 0;
+  transition: color 3s ease;
+}
+
+.title-link {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #ff7a7a; /* Slightly different color to indicate it’s clickable */
+  text-align: center;
+  margin: 0;
+  text-decoration: none; /* Removes underline by default */
+  transition: color 3s ease;
 }
 
 .subtitle {
@@ -51,6 +64,22 @@
 }
 
 .login-button:hover {
+  background-color: white;
+  color: black;
+}
+
+.signout-button {
+  background: none;
+  color: white;
+  border: 2px solid white;
+  padding: 0.8rem 1.6rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: background 0.8s, color 0.5s;
+}
+
+.signout-button:hover {
   background-color: white;
   color: black;
 }
