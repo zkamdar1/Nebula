@@ -1,0 +1,59 @@
+/* src/components/ProjectCard.css */
+.project-card {
+    display: flex;
+    background-color: #222;
+    color: white;
+    border-radius: 12px;
+    width:280px;
+    height: 140px;
+    padding: 1rem;
+    box-shadow: 0 1px 10px #ffffff;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px #ffffff;
+}
+
+.project-image {
+    width: 40%;
+    height: 100%;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+}
+
+.project-image.no-image {
+    background-color: lightgray;
+}
+
+.project-info {
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: left;
+}
+
+.project-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin: 0;
+    padding-top: 1rem;
+    
+}
+
+.project-description {
+    font-size: 0.9rem;
+    color: #ccc;
+    margin: .3rem 0;
+}
+
+.project-last-accessed {
+    font-size: 0.8rem;
+    color: #aaa;
+    padding-top: 1rem;
+}
