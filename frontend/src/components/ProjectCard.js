@@ -20,4 +20,12 @@ function ProjectCard({ title, description, lastAccessed, imageUrl }) {
                 style={imageUrl ? { backgroundImage: `url(${imageUrl})` } : {}}
             />
             <div className="project-info">
-             
+                <h3 className="project-title">{title}</h3>
+                <p className="project-description">{description}</p>
+                <p className="project-last-accessed">Last accessed: {formattedDate}</p>
+            </div>
+        </div>
+    );
+}
+
+export default ProjectCard;
