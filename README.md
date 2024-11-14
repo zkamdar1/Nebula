@@ -41,6 +41,8 @@ Welcome to **Nebula**, an automatic video generator project. Nebula takes a topi
 docker compose up --build
 
 http://0.0.0.0:8000/docs#/
+
+uvicorn backend.app:app --reload
 ---
 
 ## Tools and Technologies
