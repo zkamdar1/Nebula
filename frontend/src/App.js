@@ -5,7 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
-import DashboardPage from './pages/DashboardPage';
+import DashboardPage from './pages/DashBoardPage';
 
 function App() {
   const [user, setUser] = useState(null);

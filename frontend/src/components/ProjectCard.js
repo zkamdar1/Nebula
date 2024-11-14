@@ -3,13 +3,13 @@ import React from 'react';
 import './ProjectCard.css';
 import { FaPencilAlt } from 'react-icons/fa';
 
-function ProjectCard({ title, description, lastAccessed, imageUrl }) {
+function ProjectCard({ title, description, lastAccessed, imageUrl, onEdit }) {
 
     const formattedDate = new Date(lastAccessed).toLocaleString();
 
     const handleEditClick = (e) => {
         e.stopPropagation(); // Prevent triggering card's onClick if any
-        onEdit({ title, description, lastAccessed, imageUrl, id: undefined }); // Pass necessary project data
+        onEdit(); // Pass necessary project data
     };
 
     return (

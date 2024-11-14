@@ -1,15 +1,23 @@
 // src/components/CreateProjectModal.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import './ProjectModal.css';
 import api from '../services/api';
 
-function EditProjectModal({ onClose, onProjectEdit }) {
+function EditProjectModal({  project, onClose, onProjectUpdate, onDelete }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [image_url, setImageUrl] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (project) {
+      setTitle(project.title);
+      setDescription(project.description);
+      setImageUrl(project.imageUrl || '');
+    }
+  }, [project]);
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -17,7 +25,7 @@ function EditProjectModal({ onClose, onProjectEdit }) {
     setLoading(true);
     try {
       const response = await api.put(`/projects/{project_id}`, { title, description, image_url });
-      onProjectCreate(response.data); // Pass the new project to parent
+      onProjectUpdate(response.data); // Pass the new project to parent
       setLoading(false);
       onClose(); // Close the modal
     } catch (err) {
@@ -62,8 +70,9 @@ function EditProjectModal({ onClose, onProjectEdit }) {
           {error && <p className="error">{error}</p>}
           <div className="modal-buttons">
             <button type="submit" disabled={loading}>
-              {loading ? "Creating..." : "Create"}
+              {loading ? "Updating..." : "Update"}
             </button>
+            <button type="button" onClick={() => onDelete()} className="delete-button">Delete</button>
             <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
           </div>
         </form>

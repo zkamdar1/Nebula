@@ -7,15 +7,38 @@ import './DashboardPage.css';
 import ProjectCard from '../components/ProjectCard';
 import api from '../services/api';
 import ProjectModal from '../components/ProjectModal'; // New Modal Component
-import { getIdToken, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
+import EditProjectModal from '../components/EditProjectModal';
+import { updateEmail, updatePassword, deleteUser } from 'firebase/auth';
 
 function DashboardPage() {
   const [projects, setProjects] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false); // State for Modal
-  const [token, setToken] = useState('');
   const [showSettings, setShowSettings] = useState(false);
-  
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editProject, setEditProject] = useState(null);
+
+  const handleEditProject = (project) => {
+    setEditProject(project);
+    setShowEditModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setEditProject(null);
+    setShowEditModal(false);
+  };
+
+  const handleProjectUpdate = (updatedProject) => {
+    setProjects(projects.map(p => (p.id === updatedProject.id ? updatedProject : p)));
+    handleCloseModal();
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    await api.delete(`/projects/${projectId}`);
+    setProjects(projects.filter(p => p.id !== projectId));
+    handleCloseModal();
+  };
+
   const handleLogout = async () => {
     await signOut(auth);
   };
@@ -71,23 +94,6 @@ function DashboardPage() {
     setProjects([newProject, ...projects]); // Add the new project to the beginning
   };
 
-  const fetchToken = async () => {
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        const idToken = await getIdToken(user);
-        setToken(idToken);
-        navigator.clipboard.writeText(idToken); // Optional: Copy to clipboard
-        alert("Token copied to clipboard!");
-      } catch (error) {
-        console.error("Error fetching ID token:", error);
-        alert("Failed to fetch token.");
-      }
-    } else {
-      alert("No user is logged in.");
-    }
-  };
-
   return (
     <div className="dashboard-container">
       {/* Account Icon and Dropdown */}
@@ -135,7 +141,8 @@ function DashboardPage() {
               key={project.id}
               title={project.title}
               description={project.description}
-              lastAccessed={project.last_accessed} />
+              lastAccessed={project.last_accessed}
+              onEdit={() => handleEditProject(project)}/>
           ))
         )}
       </div>
@@ -144,6 +151,14 @@ function DashboardPage() {
         <ProjectModal
           onClose={() => setShowCreateModal(false)}
           onProjectCreate={handleProjectCreate}
+        />
+      )}
+      {showEditModal && (
+        <EditProjectModal
+          project={editProject}
+          onClose={handleCloseModal}
+          onProjectUpdate={handleProjectUpdate}
+          onDelete={() => handleDeleteProject(editProject.id)}
         />
       )}
     </div>
