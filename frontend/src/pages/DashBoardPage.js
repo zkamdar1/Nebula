@@ -2,21 +2,56 @@
 import React, { useState, useEffect } from 'react';
 import { auth } from '../services/firebase';
 import { signOut } from 'firebase/auth';
-import { FaUserCircle, FaPlus } from 'react-icons/fa'; // Account icon and plus icon
+import { FaUserCircle, FaPlus, FaTimes } from 'react-icons/fa'; // Account icon and plus icon
 import './DashboardPage.css';
 import ProjectCard from '../components/ProjectCard';
 import api from '../services/api';
 import ProjectModal from '../components/ProjectModal'; // New Modal Component
-import { getIdToken } from 'firebase/auth';
+import { getIdToken, updateEmail, updatePassword, deleteUser } from 'firebase/auth';
 
 function DashboardPage() {
   const [projects, setProjects] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false); // State for Modal
   const [token, setToken] = useState('');
+  const [showSettings, setShowSettings] = useState(false);
   
   const handleLogout = async () => {
     await signOut(auth);
+  };
+
+  const handleShowSettings = () => {
+    setShowSettings(!showSettings);
+  };
+  
+  const handleChangeEmail = async (newEmail) => {
+    try {
+      await updateEmail(auth.currentUser, newEmail);
+      alert('Email updated successfully.');
+    } catch (error) {
+      console.error('Error updating email:', error.message);
+      alert('Please reauthenticate to update your email.');
+    }
+  };
+
+  const handleChangePassword = async (newPassword) => {
+    try {
+      await updatePassword(auth.currentUser, newPassword);
+      alert('Password updated successfully.');
+    } catch (error) {
+      console.error('Error updating password:', error.message);
+      alert('Please reauthenticate to update your password.');
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteUser(auth.currentUser);
+      alert('Account deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting account:', error.message);
+      alert('Please reauthenticate to delete your account.');
+    }
   };
 
   const fetchProjects = async () => {
@@ -61,18 +96,28 @@ function DashboardPage() {
         {showDropdown && (
           <div className="dropdown-menu">
             <p className="dropdown-item" onClick={handleLogout}>Sign Out</p>
-            <div>
-              <button onClick={fetchToken}>Get Bearer Token</button>
-                {token && (
-                  <div>
-                    <p>Your Bearer Token:</p>
-                    <textarea readOnly value={token} rows="4" cols="50" />
-                  </div>
-                )}
-            </div>
+            <p className="dropdown-item" onClick={handleShowSettings}>Settings</p>
           </div>
         )}
       </div>
+
+      {showSettings && (
+        <div className="settings-menu">
+          <FaTimes className="close-icon" onClick={handleShowSettings} />
+          <h3>Account Settings</h3>
+          <input
+            type="email"
+            placeholder="New Email"
+            onBlur={(e) => handleChangeEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="New Password"
+            onBlur={(e) => handleChangePassword(e.target.value)}
+          />
+          <button onClick={handleDeleteAccount}>Delete Account</button>
+        </div>
+      )}
 
       {/* New Project Card */}
       <div className="new-project-card" onClick={() => setShowCreateModal(true)}>
