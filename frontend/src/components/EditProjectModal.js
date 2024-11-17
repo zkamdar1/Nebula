@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import './ProjectModal.css';
 import api from '../services/api';
 
-function EditProjectModal({  project, onClose, onProjectUpdate, onDelete }) {
+function EditProjectModal({  project, onClose, refreshProjects }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [image_url, setImageUrl] = useState('');
@@ -24,14 +24,30 @@ function EditProjectModal({  project, onClose, onProjectUpdate, onDelete }) {
     setError('');
     setLoading(true);
     try {
-      const response = await api.put(`/projects/{project_id}`, { title, description, image_url });
-      onProjectUpdate(response.data); // Pass the new project to parent
+      const response = await api.put(`/projects/${project.id}`, { title, description, image_url });
+      refreshProjects(); // Pass the new project to parent
       setLoading(false);
       onClose(); // Close the modal
     } catch (err) {
-      console.error("Error creating project:", err);
+      console.error("Error updating project:", err);
       setError(err.response?.data?.detail || "An error occurred while creating the project.");
       setLoading(false);
+    }
+  };
+
+  // Delete project
+  const handleDelete = async () => {
+    if (!window.confirm('Are you sure you want to delete this project?')) {
+      return;
+    }
+
+    try {
+      await api.delete(`/projects/${project.id}`);
+      refreshProjects(); // Refresh projects in the parent component
+      onClose(); // Close the modal
+    } catch (err) {
+      console.error('Error deleting project:', err);
+      setError(err.response?.data?.detail || 'An error occurred while deleting the project.');
     }
   };
 
@@ -72,7 +88,9 @@ function EditProjectModal({  project, onClose, onProjectUpdate, onDelete }) {
             <button type="submit" disabled={loading}>
               {loading ? "Updating..." : "Update"}
             </button>
-            <button type="button" onClick={() => onDelete()} className="delete-button">Delete</button>
+            <button type="button" onClick={handleDelete}
+              className="delete-button"
+            >Delete</button>
             <button type="button" onClick={onClose} className="cancel-button">Cancel</button>
           </div>
         </form>
@@ -82,8 +100,14 @@ function EditProjectModal({  project, onClose, onProjectUpdate, onDelete }) {
 }
 
 EditProjectModal.propTypes = {
+  project: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    description: PropTypes.string,
+    imageUrl: PropTypes.string,
+  }),
   onClose: PropTypes.func.isRequired,
-  onProjectCreate: PropTypes.func.isRequired,
+  refreshProjects: PropTypes.func.isRequired,
 };
 
 export default EditProjectModal;

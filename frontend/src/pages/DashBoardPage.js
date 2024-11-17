@@ -28,17 +28,6 @@ function DashboardPage() {
     setShowEditModal(false);
   };
 
-  const handleProjectUpdate = (updatedProject) => {
-    setProjects(projects.map(p => (p.id === updatedProject.id ? updatedProject : p)));
-    handleCloseModal();
-  };
-
-  const handleDeleteProject = async (projectId) => {
-    await api.delete(`/projects/${projectId}`);
-    setProjects(projects.filter(p => p.id !== projectId));
-    handleCloseModal();
-  };
-
   const handleLogout = async () => {
     await signOut(auth);
   };
@@ -157,8 +146,7 @@ function DashboardPage() {
         <EditProjectModal
           project={editProject}
           onClose={handleCloseModal}
-          onProjectUpdate={handleProjectUpdate}
-          onDelete={() => handleDeleteProject(editProject.id)}
+          refreshProjects={fetchProjects}
         />
       )}
     </div>
