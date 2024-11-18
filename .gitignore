@@ -25,3 +25,5 @@ credentials.json
 *.log
 data/
 tmp/
+
+final_videos/

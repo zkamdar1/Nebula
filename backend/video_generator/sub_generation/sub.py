@@ -129,14 +129,15 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
     # Create TextClips for each subtitle line
     text_clips = []
 
+     # Minimum display duration (to avoid too-snappy transitions)
+    min_display_duration = 0.1  # seconds
+
     # Define maximum width for the subtitle text box (e.g., 80% of video width)
     max_text_width = int(video_width * 0.88)
 
-    # Define fade duration (adjust as needed)
-    fade_duration = 0.07  # Duration of the fade-in and fade-out effects in seconds
-
     for i, (start_time, end_time, text) in enumerate(subtitles):
-        duration = end_time - start_time
+         # Calculate the actual duration
+        duration = max(end_time - start_time, min_display_duration)
 
         # Calculate desired vertical position (adjust the multiplier to move text higher or lower)
         text_y_position = int(video_height * 0.44)  # 40% from the top
@@ -171,9 +172,6 @@ def add_subtitles_to_video(video_file, srt_file, output_video_with_subs, output_
             align='center',        # Center-align the text
             interline=-5          # Adjust line spacing if needed
         ).set_position(('center', text_y_position)).set_start(start_time).set_duration(duration)
-
-        # Apply fade-in and fade-out to main text clip
-        text_clip = text_clip.fadeout(fade_duration)
 
          # Append both shadow and main text clips
         text_clips.extend([text_clip])

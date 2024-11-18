@@ -32,3 +32,6 @@ def create_video_with_audio_and_subtitles():
     clear_folder('temp_clips')
 
     return final_video_with_music
+
+if __name__ == "__main__":
+    create_video_with_audio_and_subtitles()
