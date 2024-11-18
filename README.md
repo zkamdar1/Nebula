@@ -215,5 +215,4 @@ This section explains the process of generating a video using Nebula, along with
 For any questions or suggestions, please contact [Your Name](mailto:your.email@example.com).
 
 ---
-Thanks for checking out Nebula! We hope you enjoy using this automatic video generator.
-
+Thanks for checking out Nebula! We hope you enjoy using this automati

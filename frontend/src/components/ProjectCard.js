@@ -2,18 +2,22 @@
 import React from 'react';
 import './ProjectCard.css';
 import { FaPencilAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
-function ProjectCard({ title, description, lastAccessed, imageUrl, onEdit }) {
+function ProjectCard({ id, title, description, lastAccessed, imageUrl, onEdit }) {
 
     const formattedDate = new Date(lastAccessed).toLocaleString();
+    const navigate = useNavigate();
 
+    const handleCardClick = () => navigate(`/projects/${id}`);
+    
     const handleEditClick = (e) => {
         e.stopPropagation(); // Prevent triggering card's onClick if any
         onEdit(); // Pass necessary project data
     };
 
     return (
-        <div className="project-card">
+        <div className="project-card" onClick={handleCardClick}>
             <FaPencilAlt className="edit-icon" onClick={handleEditClick} title="Edit Project" />
              <div
                 className={`project-image ${imageUrl ? 'with-image' : 'no-image'}`}

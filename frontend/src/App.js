@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import DashboardPage from './pages/DashBoardPage';
-
+import ProjectPage from './pages/ProjectPage';
 function App() {
   const [user, setUser] = useState(null);
 
@@ -22,6 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<LandingPage user={user} setUser={setUser} />} />
         <Route path="/dashboard" element={<ProtectedRoute user={user}><DashboardPage /></ProtectedRoute>} />
+        <Route path="/projects/:projectId" element={<ProtectedRoute user={user}><ProjectPage /></ProtectedRoute>} />
       </Routes>
     </Router>
   );

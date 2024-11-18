@@ -128,6 +128,7 @@ function DashboardPage() {
           projects.map((project) => (
             <ProjectCard
               key={project.id}
+              id={project.id}
               title={project.title}
               description={project.description}
               lastAccessed={project.last_accessed}
