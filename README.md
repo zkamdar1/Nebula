@@ -38,7 +38,7 @@ Welcome to **Nebula**, an automatic video generator project. Nebula takes a topi
 6. **Final Output**: Produces a complete video with visuals, narration, music, and subtitles.
 
 ### Build and run the Docker containers and FASTAPI
-python3 -m venv venv
+python -m venv venv
 source venv/bin/activate
 
 http://0.0.0.0:8000/docs#/

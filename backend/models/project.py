@@ -2,6 +2,7 @@ import uuid
 from sqlalchemy import Column, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 from backend.utils.database import Base
+from backend.models.media import Media
 from sqlalchemy.sql import func
 
 class Project(Base):
@@ -15,3 +16,4 @@ class Project(Base):
     user_id = Column(String, ForeignKey("users.uid"), nullable=False)
 
     user = relationship("User", back_populates="projects")
+    media = relationship("Media", back_populates="project", cascade="all, delete")

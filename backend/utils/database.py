@@ -37,5 +37,6 @@ def init_db():
     """
     from backend.models.user import User  
     from backend.models.project import Project
+    from backend.models.media import Media
 
     Base.metadata.create_all(bind=engine)
