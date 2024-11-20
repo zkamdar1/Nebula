@@ -27,16 +27,57 @@ function ProjectPage() {
 
   const fetchAssets = async (type) => {
     try {
-      const response = await api.get(`/media/${type}`);
-      setAssets(response.data.files);
+      const response = await api.get(`/media/${projectId}/${type}`);
+      setAssets(response.data);
     } catch (error) {
       console.error(`Error fetching ${type}:`, error);
     }
   };
 
+  const fetchFinalVideos = async () => {
+    try {
+      const response = await api.get(`/media/${projectId}/final_videos`);
+      setFinalVideos(response.data.files);
+    } catch (error) {
+      console.error(`Error fetching final_videos:`, error);
+    }
+  };
+
   useEffect(() => {
     fetchAssets(activeTab === 'background' ? 'background_clips' : 'music_clips');
+    fetchFinalVideos();
   }, [activeTab]);
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const mediaType = prompt('Enter media type (background_clips, music_clips, final_videos):');
+    if (!['background_clips', 'music_clips', 'final_videos'].includes(mediaType)) {
+      alert('Invalid media type. Try again.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('project_id', projectId);
+    formData.append('media_type', mediaType);
+    formData.append('file', file);
+
+    try {
+      await api.post('/media', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      alert('File uploaded successfully!');
+      if (mediaType === 'background_clips' || mediaType === 'music_clips') {
+        fetchAssets(activeTab === 'background' ? 'background' : 'music');
+      } else {
+        fetchFinalVideos();
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Failed to upload file.');
+    }
+  };
 
   const handleGenerateVideo = async () => {
     try {
@@ -65,12 +106,9 @@ function ProjectPage() {
             </button>
           </div>
           <div className="assets-container">
-            {assets.map((asset, index) => (
-              <div
-                key={index}
-                className="asset-item"
-                onClick={() => setSelectedMedia(asset)}
-              >
+            {assets.map((asset) => (
+              <div key={asset.id} className="asset-item" onClick={() => setSelectedMedia(asset.media_url)}>
+                <img src="/placeholder-thumbnail.png" alt="Thumbnail" className="thumbnail" />
               </div>
             ))}
           </div>
@@ -81,20 +119,17 @@ function ProjectPage() {
           {selectedMedia ? (
             selectedMedia.endsWith('.mp4') ? (
               <video controls className="video-preview">
-                <source src={`/media/${selectedMedia}`} type="video/mp4" />
+                <source src={selectedMedia} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             ) : (
               <audio controls className="audio-preview">
-                <source src={`/media/${selectedMedia}`} type="audio/mp3" />
+                <source src={selectedMedia} type="audio/mp3" />
                 Your browser does not support the audio tag.
               </audio>
             )
           ) : (
-            <video controls className="video-preview">
-              <source src={`/media/${finalVideos[0]}`} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+            <p>Select media to preview</p>
           )}
         </div>
 
@@ -102,12 +137,9 @@ function ProjectPage() {
         <div className="final-videos-card">
           <h3>Final Videos</h3>
           <div className="assets-container">
-            {finalVideos.map((video, index) => (
-              <div
-                key={index}
-                className="asset-item"
-                onClick={() => setSelectedMedia(video)}
-              >
+            {finalVideos.map((video) => (
+              <div key={video.id} className="asset-item" onClick={() => setSelectedMedia(video.media_url)}>
+                <img src="/placeholder-thumbnail.png" alt="Thumbnail" className="thumbnail" />
               </div>
             ))}
           </div>
@@ -116,7 +148,18 @@ function ProjectPage() {
 
       {/* Bottom Half */}
       <div className="bottom-half">
-        <h2>Customize and Generate</h2>
+        <div className="bottom-header">
+          <h2>Customize and Generate</h2>
+          <input
+            type="file"
+            id="file-upload"
+            style={{ display: 'none' }}
+            onChange={handleFileUpload}
+          />
+          <label htmlFor="file-upload" className="upload-button">
+            Upload Media
+          </label>
+        </div>
         <div className="filters-container">
           <label>Font:</label>
           <select>

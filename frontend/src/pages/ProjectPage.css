@@ -115,6 +115,26 @@
   gap: 1rem;
 }
 
+.bottom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.upload-button {
+  padding: 0.5rem 1rem;
+  background-color: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.upload-button:hover {
+  background-color: #555;
+}
+
 .filters-container {
   display: flex;
   gap: 1rem;
