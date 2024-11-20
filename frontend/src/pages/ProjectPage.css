@@ -59,13 +59,14 @@
 }
 
 .asset-preview {
-  width: 100%;
+  width: 100px;
+  height: 56px;
   border-radius: 6px;
 }
 
 /* Middle Card: Video Preview */
 .preview-card {
-  flex: 2;
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -75,6 +76,8 @@
 
 .video-preview {
   width: 80%;
+  max-width: 320px;
+  max-height: 568px;
   aspect-ratio: 9 / 16;
   border-radius: 12px;
   background-color: black;

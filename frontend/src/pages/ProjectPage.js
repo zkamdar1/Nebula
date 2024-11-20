@@ -7,6 +7,9 @@ function ProjectPage() {
   const { projectId } = useParams();
   const [project, setProject] = useState(null);
   const [activeTab, setActiveTab] = useState('background'); // Tab state for the left card
+  const [assets, setAssets] = useState([]);
+  const [finalVideos, setFinalVideos] = useState([]);
+  const [selectedMedia, setSelectedMedia] = useState(null);
 
 
   useEffect(() => {
@@ -22,29 +25,30 @@ function ProjectPage() {
     fetchProject();
   }, [projectId]);
 
+  const fetchAssets = async (type) => {
+    try {
+      const response = await api.get(`/media/${type}`);
+      setAssets(response.data.files);
+    } catch (error) {
+      console.error(`Error fetching ${type}:`, error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAssets(activeTab === 'background' ? 'background_clips' : 'music_clips');
+  }, [activeTab]);
+
+  const handleGenerateVideo = async () => {
+    try {
+      await api.post(`/projects/${projectId}/generate`);
+      alert('Video generation started!');
+    } catch (error) {
+      console.error('Error generating video:', error);
+      alert('Failed to generate video.');
+    }
+  };
+
   if (!project) return <p>Loading...</p>;
-
-  const renderAssets = () => {
-    const assets = activeTab === 'background' ? ['clip1.mp4', 'clip2.mp4'] : ['music1.mp3', 'music2.mp3'];
-    return assets.map((asset, index) => (
-      <div key={index} className="asset-item">
-        {activeTab === 'background' ? (
-          <video src={`/backend/video_generator/background_clips/${asset}`} controls className="asset-preview" />
-        ) : (
-          <audio src={`/backend/video_generator/music_clips/${asset}`} controls className="asset-preview" />
-        )}
-      </div>
-    ));
-  };
-
-  const renderFinalVideos = () => {
-    const finalVideos = ['output1.mp4', 'output2.mp4'];
-    return finalVideos.map((video, index) => (
-      <div key={index} className="asset-item">
-        <video src={`/backend/video_generator/final_videos/${video}`} controls className="asset-preview" />
-      </div>
-    ));
-  };
 
   return (
    <div className="project-page">
@@ -60,21 +64,53 @@ function ProjectPage() {
               Music Clips
             </button>
           </div>
-          <div className="assets-container">{renderAssets()}</div>
+          <div className="assets-container">
+            {assets.map((asset, index) => (
+              <div
+                key={index}
+                className="asset-item"
+                onClick={() => setSelectedMedia(asset)}
+              >
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Middle Card: Video Preview */}
         <div className="preview-card">
-          <video controls className="video-preview">
-            <source src={project.currentVideoUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          {selectedMedia ? (
+            selectedMedia.endsWith('.mp4') ? (
+              <video controls className="video-preview">
+                <source src={`/media/${selectedMedia}`} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <audio controls className="audio-preview">
+                <source src={`/media/${selectedMedia}`} type="audio/mp3" />
+                Your browser does not support the audio tag.
+              </audio>
+            )
+          ) : (
+            <video controls className="video-preview">
+              <source src={`/media/${finalVideos[0]}`} type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+          )}
         </div>
 
         {/* Right Card: Final Videos */}
         <div className="final-videos-card">
           <h3>Final Videos</h3>
-          <div className="assets-container">{renderFinalVideos()}</div>
+          <div className="assets-container">
+            {finalVideos.map((video, index) => (
+              <div
+                key={index}
+                className="asset-item"
+                onClick={() => setSelectedMedia(video)}
+              >
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -95,7 +131,7 @@ function ProjectPage() {
             <option>Dynamic</option>
           </select>
         </div>
-        <button className="generate-button">Generate Video</button>
+        <button className="generate-button" onClick={handleGenerateVideo}>Generate Video</button>
       </div>
     </div>
   );

@@ -15,5 +15,5 @@ class Project(Base):
     last_accessed = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     user_id = Column(String, ForeignKey("users.uid"), nullable=False)
 
-    user = relationship("User", back_populates="project")
+    user = relationship("User", back_populates="projects")
     media = relationship("Media", back_populates="project", cascade="all, delete")
