@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Literal
 
 class MediaBase(BaseModel):
-    media_type: Literal["background", "music", "final"]  # Constrain to valid values
+    media_type: Literal['background_clips', 'music_clips']  # Constrain to valid values
     media_url: str = Field(..., pattern=r"^https?://")  # Validate as a valid URL
 
 class MediaCreate(MediaBase):

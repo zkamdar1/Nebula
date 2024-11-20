@@ -2,7 +2,7 @@ import boto3
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from backend.utils.database import get_db
-from backend.utils.s3 import upload_file_to_s3
+from backend.utils.s3 import BUCKET_NAME, s3_client
 from backend.models.media import Media
 from backend.models.project import Project
 from backend.schemas.media import MediaResponse
@@ -27,7 +27,7 @@ async def upload_media(
     Upload a media file to S3 and store its reference in the database.
     """
     # Validate media type
-    if media_type not in ["background_clips", "music_clips", "final_videos"]:
+    if media_type not in ['background_clips', 'music_clips']:
         raise HTTPException(status_code=400, detail="Invalid media type.")
 
     # Check if the project exists and belongs to the user
@@ -40,11 +40,13 @@ async def upload_media(
     unique_filename = f"{uuid.uuid4()}{file_extension}"
     s3_path = f"projects/{project_id}/{media_type}/{unique_filename}"
 
-    # Upload file to S3
+   # Upload file to S3
     try:
-        s3_url = upload_file_to_s3(file.file, s3_path)
+        s3_client.upload_fileobj(file.file, BUCKET_NAME, s3_path)
+        s3_url = f"https://{BUCKET_NAME}.s3.{os.getenv('AWS_S3_REGION')}.amazonaws.com/{s3_path}"
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error uploading to S3: {e}")
+
 
     # Save media reference in the database
     media = Media(

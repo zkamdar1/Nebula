@@ -49,35 +49,40 @@ function ProjectPage() {
   }, [activeTab]);
 
   const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
+  const fileInput = event.target;
+  const file = fileInput.files[0];
+  if (!file) return;
 
-    const mediaType = prompt('Enter media type (background_clips, music_clips, final_videos):');
-    if (!['background_clips', 'music_clips', 'final_videos'].includes(mediaType)) {
-      alert('Invalid media type. Try again.');
-      return;
+  const mediaType = prompt('Enter media type (background_clips, music_clips):');
+  if (!['background_clips', 'music_clips'].includes(mediaType)) {
+    alert('Invalid media type. Try again.');
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('project_id', projectId);
+  formData.append('media_type', mediaType);
+  formData.append('file', file);
+
+  try {
+    await api.post('/media', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    alert('File uploaded successfully!');
+    if (mediaType === 'background_clips' || mediaType === 'music_clips') {
+      fetchAssets(mediaType === 'background_clips' ? 'background_clips' : 'music_clips');
+    } else {
+      fetchFinalVideos();
     }
+  } catch (error) {
+    console.error('Error uploading file:', error);
+    alert('Failed to upload file.');
+  } finally {
+    // Reset the input value to allow re-selecting the same file
+    fileInput.value = '';
+  }
+};
 
-    const formData = new FormData();
-    formData.append('project_id', projectId);
-    formData.append('media_type', mediaType);
-    formData.append('file', file);
-
-    try {
-      await api.post('/media', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-      alert('File uploaded successfully!');
-      if (mediaType === 'background_clips' || mediaType === 'music_clips') {
-        fetchAssets(activeTab === 'background' ? 'background' : 'music');
-      } else {
-        fetchFinalVideos();
-      }
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Failed to upload file.');
-    }
-  };
 
   const handleGenerateVideo = async () => {
     try {
