@@ -2,7 +2,7 @@ import boto3
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from backend.utils.database import get_db
-from backend.utils.s3 import upload_file_to_s3, BUCKET_NAME
+from backend.utils.s3 import upload_file_to_s3
 from backend.models.media import Media
 from backend.models.project import Project
 from backend.schemas.media import MediaResponse

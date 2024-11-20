@@ -3,6 +3,7 @@ from backend.api import generate  # Import the router for video generation (gene
 from backend.api import health
 from backend.api import projects
 from backend.api import auth
+from backend.api import media
 from backend.utils.database import init_db
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
@@ -36,3 +37,4 @@ app.include_router(generate.router)
 app.include_router(health.router)
 app.include_router(projects.router)
 app.include_router(auth.router)
+app.include_router(media.router)

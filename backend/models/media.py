@@ -8,8 +8,8 @@ from backend.utils.database import Base
 class Media(Base):
     __tablename__ = "media"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    project_id = Column(UUID(as_uuid=True), ForeignKey("projects.id"), nullable=False)
+    id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
+    project_id = Column(String, ForeignKey("projects.id"), nullable=False)
     media_type = Column(Enum("background", "music", "final", name="media_type_enum"), nullable=False)
     media_url = Column(String, nullable=False)
 
