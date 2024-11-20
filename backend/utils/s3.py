@@ -18,6 +18,22 @@ def upload_file_to_s3(file_path, s3_path):
         print(f"Error uploading file to S3: {e}")
         raise
 
+def create_s3_project_folders(project_id):
+    """Creates necessary folders for a project in S3."""
+    try:
+        folders = [
+            f"projects/{project_id}/background_clips/",
+            f"projects/{project_id}/music_clips/",
+            f"projects/{project_id}/final_videos/"
+        ]
+        for folder in folders:
+            # S3 folders are just keys with a trailing slash
+            s3_client.put_object(Bucket=BUCKET_NAME, Key=folder)
+        print(f"Created folders for project {project_id} in S3.")
+    except Exception as e:
+        print(f"Error creating S3 folders: {e}")
+        raise
+    
 '''
 def test_s3_connection():
     try:

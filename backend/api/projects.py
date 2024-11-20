@@ -3,6 +3,7 @@ from typing import List, Optional
 from fastapi import Depends, APIRouter, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from backend.utils.database import get_db
+from backend.utils.s3 import create_s3_project_folders
 from backend.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse
 from backend.models.project import Project
 from .auth import get_current_user
@@ -29,6 +30,16 @@ def create_project(
     db.add(new_project)
     db.commit()
     db.refresh(new_project)
+
+    # Step 2: Create S3 folders for the new project
+    try:
+        create_s3_project_folders(new_project.id)
+    except Exception as e:
+        # If folder creation fails, rollback the transaction
+        db.delete(new_project)
+        db.commit()
+        raise HTTPException(status_code=500, detail=f"Error setting up S3 folders: {e}")
+    
     return new_project
 
 @router.get("/", response_model=List[ProjectResponse])
