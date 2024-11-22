@@ -47,22 +47,29 @@
 
 .assets-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: wrap;
   gap: 0.5rem;
   overflow-y: auto;
 }
 
 .asset-item {
+  width: 100px; /* Adjust width for flexibility */
+  height: auto; /* Allow height to adjust */
   background-color: #444;
   border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem;
+  overflow: hidden; /* Prevent content overflow */
 }
 
 .asset-preview {
-  width: 100px;
-  height: 56px;
-  border-radius: 6px;
+  max-width: 100%; /* Ensure the preview fits */
+  max-height: 100%; /* Keep it within the container */
+  object-fit: cover; /* Avoid distortion */
 }
+
 
 /* Middle Card: Video Preview */
 .preview-card {

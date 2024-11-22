@@ -15,6 +15,8 @@ router = APIRouter(
     tags=["media"]
 )
 
+VALID_MEDIA_TYPES = ["background_clips", "music_clips"]
+
 @router.post("/", response_model=MediaResponse, status_code=201)
 async def upload_media(
     project_id: str = Form(...),
@@ -27,7 +29,7 @@ async def upload_media(
     Upload a media file to S3 and store its reference in the database.
     """
     # Validate media type
-    if media_type not in ['background_clips', 'music_clips']:
+    if media_type not in VALID_MEDIA_TYPES:
         raise HTTPException(status_code=400, detail="Invalid media type.")
 
     # Check if the project exists and belongs to the user
@@ -71,7 +73,7 @@ def list_media(
     List all media files of a specific type for a project.
     """
     # Validate media type
-    if media_type not in ["background", "music", "final"]:
+    if media_type not in VALID_MEDIA_TYPES:
         raise HTTPException(status_code=400, detail="Invalid media type.")
 
     # Check if the project exists and belongs to the user

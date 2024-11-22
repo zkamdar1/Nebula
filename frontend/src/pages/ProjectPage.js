@@ -8,7 +8,6 @@ function ProjectPage() {
   const [project, setProject] = useState(null);
   const [activeTab, setActiveTab] = useState('background'); // Tab state for the left card
   const [assets, setAssets] = useState([]);
-  const [finalVideos, setFinalVideos] = useState([]);
   const [selectedMedia, setSelectedMedia] = useState(null);
 
 
@@ -25,63 +24,53 @@ function ProjectPage() {
     fetchProject();
   }, [projectId]);
 
-  const fetchAssets = async (type) => {
-    try {
-      const response = await api.get(`/media/${projectId}/${type}`);
-      setAssets(response.data);
-    } catch (error) {
-      console.error(`Error fetching ${type}:`, error);
-    }
-  };
+  const fetchMedia = async () => {
+      const mediaType = activeTab === "background" ? "background_clips" : "music_clips";
 
-  const fetchFinalVideos = async () => {
     try {
-      const response = await api.get(`/media/${projectId}/final_videos`);
-      setFinalVideos(response.data.files);
+      const response = await api.get(`/media/${projectId}/${mediaType}`);
+      setAssets(response.data); // Store all media in one state
     } catch (error) {
-      console.error(`Error fetching final_videos:`, error);
+      console.error("Error fetching media:", error);
     }
   };
 
   useEffect(() => {
-    fetchAssets(activeTab === 'background' ? 'background_clips' : 'music_clips');
-    fetchFinalVideos();
-  }, [activeTab]);
+    fetchMedia();
+  }, [projectId, activeTab]);
+
+  const filteredAssets = assets.filter((asset) =>
+  activeTab === "background"
+    ? asset.media_type === "background_clips"
+    : asset.media_type === "music_clips"
+  );
 
   const handleFileUpload = async (event) => {
-  const fileInput = event.target;
-  const file = fileInput.files[0];
-  if (!file) return;
+    const fileInput = event.target;
+    const file = fileInput.files[0];
+    const mediaType = document.getElementById("media-type").value;
 
-  const mediaType = prompt('Enter media type (background_clips, music_clips):');
-  if (!['background_clips', 'music_clips'].includes(mediaType)) {
-    alert('Invalid media type. Try again.');
-    return;
-  }
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append('project_id', projectId);
-  formData.append('media_type', mediaType);
-  formData.append('file', file);
+    const formData = new FormData();
+    formData.append("project_id", projectId);
+    formData.append("media_type", mediaType);
+    formData.append("file", file);
 
-  try {
-    await api.post('/media', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-    alert('File uploaded successfully!');
-    if (mediaType === 'background_clips' || mediaType === 'music_clips') {
-      fetchAssets(mediaType === 'background_clips' ? 'background_clips' : 'music_clips');
-    } else {
-      fetchFinalVideos();
+    try {
+      await api.post("/media/", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      alert("File uploaded successfully!");
+      fetchMedia(); // Refresh media
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      alert("Failed to upload file.");
+    } finally {
+      fileInput.value = "";
     }
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    alert('Failed to upload file.');
-  } finally {
-    // Reset the input value to allow re-selecting the same file
-    fileInput.value = '';
-  }
-};
+  };
+
 
 
   const handleGenerateVideo = async () => {
@@ -111,10 +100,22 @@ function ProjectPage() {
             </button>
           </div>
           <div className="assets-container">
-            {assets.map((asset) => (
+            {filteredAssets.map((asset) => (
               <div key={asset.id} className="asset-item" onClick={() => setSelectedMedia(asset.media_url)}>
+              {asset.media_url.endsWith('.mp4') ? (
+                <video className="thumbnail" width="100%" height="auto" controls>
+                  <source src={asset.media_url} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : asset.media_url.endsWith('.mp3') ? (
+                <audio className="thumbnail" controls>
+                  <source src={asset.media_url} type="audio/mp3" />
+                  Your browser does not support the audio tag.
+                </audio>
+              ) : (
                 <img src="/placeholder-thumbnail.png" alt="Thumbnail" className="thumbnail" />
-              </div>
+              )}
+            </div>
             ))}
           </div>
         </div>
@@ -142,9 +143,9 @@ function ProjectPage() {
         <div className="final-videos-card">
           <h3>Final Videos</h3>
           <div className="assets-container">
-            {finalVideos.map((video) => (
+            {filteredAssets.map((video) => (
               <div key={video.id} className="asset-item" onClick={() => setSelectedMedia(video.media_url)}>
-                <img src="/placeholder-thumbnail.png" alt="Thumbnail" className="thumbnail" />
+                <img src={selectedMedia} alt="Thumbnail" className="thumbnail" />
               </div>
             ))}
           </div>
@@ -155,15 +156,21 @@ function ProjectPage() {
       <div className="bottom-half">
         <div className="bottom-header">
           <h2>Customize and Generate</h2>
-          <input
-            type="file"
-            id="file-upload"
-            style={{ display: 'none' }}
-            onChange={handleFileUpload}
-          />
-          <label htmlFor="file-upload" className="upload-button">
-            Upload Media
-          </label>
+          <div className="upload-container">
+            <select id="media-type" defaultValue="background_clips">
+              <option value="background_clips">Background Clips</option>
+              <option value="music_clips">Music Clips</option>
+            </select>
+            <input
+              type="file"
+              id="file-upload"
+              onChange={handleFileUpload}
+              style={{ display: "none" }}
+            />
+            <label htmlFor="file-upload" className="upload-button">
+              Upload Media
+            </label>
+          </div>
         </div>
         <div className="filters-container">
           <label>Font:</label>
